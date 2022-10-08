@@ -1,7 +1,7 @@
-<div class="crump-dropdown-wrapper" >
-    <input type="text" [attr.value]="dropdownValue" [placeholder]='placeholder' [disabled]="disabled" [ngClass]="invalid ? 'invalid' : ''" class="dropdown" (keyup)="filter($event)" (focus)="toggleDropdown()"/>
+<div class="crump-dropdown-wrapper" #crumpdropdown>
+    <input type="text" [attr.value]="dropdownValue" [placeholder]='placeholder' [disabled]="disabled" [ngClass]="invalid ? 'invalid' : ''" class="dropdown" (keyup)="filter($event)" (focus)="toggleDropdown()" #dropdowninput/>
     
     <ul class="dropdown-container" *ngIf="isOpen" [ngStyle]="{'max-height.px': maxHeight}">
         <li class="dropdown-list" *ngFor="let option of filterOptions" [attr.data-value]="option.value" [class]="option.status ?? ''" (click)="onSelect(option)">{{option.option}}</li>
     </ul>
-</div> 
+</div>  

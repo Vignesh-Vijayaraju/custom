@@ -1,36 +1,114 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
 
 type CrumpOptions = {value: string | number, option: string, status?: "disabled" | "danger" | "warning" };
 @Component({
   selector: 'crump-select',
   templateUrl: './select.component.html',
-  styleUrls: ['./select.component.scss'],
+  styleUrls: ['./select.component.scss']
 })
 export class SelectComponent implements OnInit {
 
+  /**
+	 * Contains the options for the selctbox with type CrumpOptions.
+	 */
   @Input() 
   set options(value: CrumpOptions[]) {
     this._options = value;
   };
 
-
   get options() {
     return this._options;
   }
 
-  @Input() disabled: boolean = false;
+  /**
+	 * Property to Disable the Dropdown
+   * default = false
+	 */
+  @Input() 
+  set disabled(value: boolean) {
+    this._disabled = value;
+  };
 
-  @Input() placeholder: string = 'Select';
+  get disabled() {
+    return this._disabled;
+  }
 
-  @Input() type: 'multi' | 'default' = 'default';
+  /**
+	 * Property to show default text.
+   * default = 'Select'
+	 */
+  @Input() 
+  set placeholder(value: string) {
+    this._placeholder = value;
+  };
 
-  @Input() invalid: boolean = false;
+  get placeholder() {
+    return this._placeholder;
+  }
 
-  @Input() invalidText!: string;
+  /**
+	 * Property to show dropdown type, either multiple or default
+   * default = 'default'
+	 */
+  @Input() 
+  set type(value: 'multi' | 'default') {
+    this._type = value;
+  };
 
-  @Input() maxHeight: number = 250;
+  get type() {
+    return this._type;
+  }
+
+  /**
+	 * Property to show form invalid state
+   * default = false
+	 */
+  @Input() 
+  set invalid(value: boolean) {
+    this._invalid = value;
+  };
+
+  get invalid() {
+    return this._invalid;
+  }
+
+  /**
+	 * Property to show form invalid state text
+   * default = ''
+	 */
+  @Input() 
+  set invalidText(value: string) {
+    this._invalidText = value;
+  };
+
+  get invalidText() {
+    return this._invalidText;
+  }
+
+  /**
+	 * Property to add max height to the dropdown
+   * default = 250
+	 */
+  @Input() 
+  set maxHeight(value: number) {
+    this._maxHeight = value;
+  };
+
+
+  get maxHeight() {
+    return this._maxHeight;
+  }
+
+  @ViewChild('crumpdropdown') crumpDropdown!:ElementRef;
+  @ViewChild('dropdowninput') dropdownInput!:ElementRef;
 
   protected _options!: CrumpOptions[];
+  protected _disabled: boolean = false;
+  protected _placeholder: string = 'Select';
+  protected _type: 'multi' | 'default' = 'default';;
+  protected _invalid: boolean = false;
+  protected _invalidText!: string;
+  protected _maxHeight: number = 250;
 
   //Stores the Exact Filtered Values by default contains all the values
   filterOptions!: CrumpOptions[];
@@ -41,12 +119,21 @@ export class SelectComponent implements OnInit {
   //Sets value of dropdown component
   dropdownValue: string = "";
 
-  constructor() {}
+  constructor(private _cdr: ChangeDetectorRef) {
+  }
 
   ngOnInit(): void {
     this.filterOptions = this.options;
   }
   
+
+  @HostListener('document:mousedown', ['$event'])
+  onGlobalClick(event:any): void {
+     if (!this.crumpDropdown.nativeElement.contains(event.target)) {
+        // clicked outside => close dropdown list
+     this.isOpen = false;
+     }
+  }
 
   /**
    * Filter as person inputs
@@ -73,8 +160,14 @@ export class SelectComponent implements OnInit {
 
   toggleDropdown() {
     this.isOpen = !this.disabled && !this.isOpen;
+    this.isOpen && this.dropdownInput.nativeElement.select();
   }
 
+  /**
+   * On Click Select the content inside dropdown
+   */
+  onDropdownClick(event: any) {
+  }
  
 
   /**
@@ -84,6 +177,7 @@ export class SelectComponent implements OnInit {
 
   onSelect(option:CrumpOptions) {
     this.dropdownValue = option.status !== 'disabled' ? option.option : this.dropdownValue;
+    this.dropdownInput.nativeElement.value = this.dropdownValue;
     this.toggleDropdown();
   }
 }

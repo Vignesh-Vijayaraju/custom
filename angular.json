@@ -12,7 +12,7 @@
       },
       "root": "",
       "sourceRoot": "src",
-      "prefix": "app",
+      "prefix": "crump",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -103,5 +103,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "8f30ddd9-12c6-4593-97a5-9c7a57956776"
   }
 }
